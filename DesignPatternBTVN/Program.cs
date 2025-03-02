@@ -37,6 +37,12 @@
             public void ShowDetails() => Console.WriteLine("Asian Electric Car - Engine: Battery, Seats: Eco-friendly, Size: Compact");
         }
 
+        public class VinFastElectric : ICar
+        {
+            public void ShowDetails() => Console.WriteLine("VinFast Electric Car - Engine: X, Seats: Royal, Size: 3XL");
+        }
+
+
         // Abstract Factory
         public interface ICarFactory
         {
@@ -61,6 +67,14 @@
             public ICar CreateElectricCar() => new AsianElectric();
         }
 
+        public class VNCarFactory : ICarFactory
+        {
+            public ICar CreateSedan() => new AsianSedan();
+            public ICar CreateSUV() => new EuropeanSUV();
+            public ICar CreateElectricCar() => new VinFastElectric();
+        }
+
+
         static void Main(string[] args)
         {
             while (true)
@@ -68,13 +82,14 @@
                 ICarFactory? factory = null;
                 while (factory == null)
                 {
-                    Console.Write("Chon khu vuc (European / Asian): ");
+                    Console.Write("Chon khu vuc (European / Asian / Vietnam): ");
                     string region = Console.ReadLine().Trim();
 
                     factory = region switch
                     {
                         "European" => new EuropeanCarFactory(),
                         "Asian" => new AsianCarFactory(),
+                        "Vietnam" => new VNCarFactory(),
                         _ => null
                     };
 

@@ -1,80 +1,79 @@
 ﻿namespace DesignPatternBTVN
 {
+    public interface ICar
+    {
+        void ShowDetails();
+    }
+
+    public class EuropeanSedan : ICar
+    {
+        public void ShowDetails() => Console.WriteLine("European Sedan - Engine: Turbo, Seats: Leather, Size: Medium");
+    }
+
+    public class EuropeanSUV : ICar
+    {
+        public void ShowDetails() => Console.WriteLine("European SUV - Engine: V6, Seats: Luxury, Size: Large");
+    }
+
+    public class EuropeanElectric : ICar
+    {
+        public void ShowDetails() => Console.WriteLine("European Electric Car - Engine: Electric, Seats: Premium, Size: Compact");
+    }
+
+    public class AsianSedan : ICar
+    {
+        public void ShowDetails() => Console.WriteLine("Asian Sedan - Engine: Hybrid, Seats: Fabric, Size: Medium");
+    }
+
+    public class AsianSUV : ICar
+    {
+        public void ShowDetails() => Console.WriteLine("Asian SUV - Engine: V8, Seats: Standard, Size: Large");
+    }
+
+    public class AsianElectric : ICar
+    {
+        public void ShowDetails() => Console.WriteLine("Asian Electric Car - Engine: Battery, Seats: Eco-friendly, Size: Compact");
+    }
+
+    public class VinFastElectric : ICar
+    {
+        public void ShowDetails() => Console.WriteLine("VinFast Electric Car - Engine: X, Seats: Royal, Size: 3XL");
+    }
+
+
+    // Abstract Factory
+    public interface ICarFactory
+    {
+        ICar CreateSedan();
+        ICar CreateSUV();
+        ICar CreateElectricCar();
+    }
+
+    // Concrete Factory cho Châu Âu
+    public class EuropeanCarFactory : ICarFactory
+    {
+        public ICar CreateSedan() => new EuropeanSedan();
+        public ICar CreateSUV() => new EuropeanSUV();
+        public ICar CreateElectricCar() => new EuropeanElectric();
+    }
+
+    // Concrete Factory cho Châu Á
+    public class AsianCarFactory : ICarFactory
+    {
+        public ICar CreateSedan() => new AsianSedan();
+        public ICar CreateSUV() => new AsianSUV();
+        public ICar CreateElectricCar() => new AsianElectric();
+    }
+
+    public class VNCarFactory : ICarFactory
+    {
+        public ICar CreateSedan() => new AsianSedan();
+        public ICar CreateSUV() => new EuropeanSUV();
+        public ICar CreateElectricCar() => new VinFastElectric();
+    }
+
     internal class Program
     {
-        public interface ICar
-        {
-            void ShowDetails();
-        }
-
-        public class EuropeanSedan : ICar
-        {
-            public void ShowDetails() => Console.WriteLine("European Sedan - Engine: Turbo, Seats: Leather, Size: Medium");
-        }
-
-        public class EuropeanSUV : ICar
-        {
-            public void ShowDetails() => Console.WriteLine("European SUV - Engine: V6, Seats: Luxury, Size: Large");
-        }
-
-        public class EuropeanElectric : ICar
-        {
-            public void ShowDetails() => Console.WriteLine("European Electric Car - Engine: Electric, Seats: Premium, Size: Compact");
-        }
-
-        public class AsianSedan : ICar
-        {
-            public void ShowDetails() => Console.WriteLine("Asian Sedan - Engine: Hybrid, Seats: Fabric, Size: Medium");
-        }
-
-        public class AsianSUV : ICar
-        {
-            public void ShowDetails() => Console.WriteLine("Asian SUV - Engine: V8, Seats: Standard, Size: Large");
-        }
-
-        public class AsianElectric : ICar
-        {
-            public void ShowDetails() => Console.WriteLine("Asian Electric Car - Engine: Battery, Seats: Eco-friendly, Size: Compact");
-        }
-
-        public class VinFastElectric : ICar
-        {
-            public void ShowDetails() => Console.WriteLine("VinFast Electric Car - Engine: X, Seats: Royal, Size: 3XL");
-        }
-
-
-        // Abstract Factory
-        public interface ICarFactory
-        {
-            ICar CreateSedan();
-            ICar CreateSUV();
-            ICar CreateElectricCar();
-        }
-
-        // Concrete Factory cho Châu Âu
-        public class EuropeanCarFactory : ICarFactory
-        {
-            public ICar CreateSedan() => new EuropeanSedan();
-            public ICar CreateSUV() => new EuropeanSUV();
-            public ICar CreateElectricCar() => new EuropeanElectric();
-        }
-
-        // Concrete Factory cho Châu Á
-        public class AsianCarFactory : ICarFactory
-        {
-            public ICar CreateSedan() => new AsianSedan();
-            public ICar CreateSUV() => new AsianSUV();
-            public ICar CreateElectricCar() => new AsianElectric();
-        }
-
-        public class VNCarFactory : ICarFactory
-        {
-            public ICar CreateSedan() => new AsianSedan();
-            public ICar CreateSUV() => new EuropeanSUV();
-            public ICar CreateElectricCar() => new VinFastElectric();
-        }
-
-
         static void Main(string[] args)
         {
             while (true)

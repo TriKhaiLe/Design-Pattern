@@ -30,6 +30,13 @@
             public void Serve() => Console.WriteLine("Serving Pasta");
         }
 
+        class CrabSoup : IDish
+        {
+            public void Prepare() => Console.WriteLine("Catch Crab");
+            public void Cook() => Console.WriteLine("Cooking Crab in Soup");
+            public void Serve() => Console.WriteLine("Display Crab Soup");
+        }
+
         interface IDishFactory
         {
             IDish CreateDish();
@@ -50,17 +57,23 @@
             public IDish CreateDish() => new Pasta();
         }
 
+        class CrabSoupFactory : IDishFactory
+        {
+            public IDish CreateDish() => new CrabSoup();
+        }
+
         static void Main(string[] args)
         {
             while (true)
             {
-                Console.Write("Chon mon an (Pizza / Burger / Pasta): ");
+                Console.Write("Chon mon an (Pizza / Burger / Pasta / CrabSoup): ");
                 string dish = Console.ReadLine().Trim();
                 IDishFactory? factory = dish switch
                 {
                     "Pizza" => new PizzaFactory(),
                     "Burger" => new BurgerFactory(),
                     "Pasta" => new PastaFactory(),
+                    "CrabSoup" => new CrabSoupFactory(),
                     _ => null
                 };
                 if (factory == null)
@@ -73,6 +86,15 @@
                 food.Prepare();
                 food.Cook();
                 food.Serve();
+
+                Console.Write("Ban co muon nau them mon an khong? (Y/N): ");
+                if (Console.ReadLine().Trim().ToUpper() != "Y")
+                {
+                    break;
+                }
+                Console.WriteLine(
+                    "------------------------------------------------------------");
+
             }
         }
     }

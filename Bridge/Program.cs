@@ -31,67 +31,41 @@
         }
     }
 
-    public interface IControlSystem
+    public abstract class ControlSystem
     {
-        void Control();
-    }
+        protected IIrrigationSystem _irrigationSystem;
 
-    public class ManualControl : IControlSystem
-    {
-        private IIrrigationSystem _irrigationSystem;
-
-        public ManualControl(IIrrigationSystem irrigationSystem)
+        public ControlSystem(IIrrigationSystem irrigationSystem)
         {
             _irrigationSystem = irrigationSystem;
         }
 
-        public void Control()
+        public abstract void Control();
+    }
+
+    public class ManualControl : ControlSystem
+    {
+        public ManualControl(IIrrigationSystem irrigationSystem) : base(irrigationSystem)
+        {
+        }
+
+        public override void Control()
         {
             Console.WriteLine("Manually controlling");
             _irrigationSystem.WaterPlants();
         }
     }
 
-    public class AutomaticControl : IControlSystem
+    public class AutomaticControl : ControlSystem
     {
-        private IIrrigationSystem _irrigationSystem;
-
-        public AutomaticControl(IIrrigationSystem irrigationSystem)
+        public AutomaticControl(IIrrigationSystem irrigationSystem) : base(irrigationSystem)
         {
-            _irrigationSystem = irrigationSystem;
         }
 
-        public void Control()
+        public override void Control()
         {
             Console.WriteLine("Automatically controlling");
             _irrigationSystem.WaterPlants();
-        }
-    }
-
-    public abstract class IrrigationController
-    {
-        protected IControlSystem controlSystem;
-
-        protected IrrigationController(IControlSystem controlSystem)
-        {
-            this.controlSystem = controlSystem;
-        }
-
-        public abstract void Operate();
-    }
-
-    public class FarmIrrigation : IrrigationController
-    {
-        private string _farmName;
-
-        public FarmIrrigation(string farmName, IControlSystem controlSystem)
-            : base(controlSystem) => _farmName = farmName;
-
-        public override void Operate()
-        {
-            Console.WriteLine($"{_farmName}:");
-            controlSystem.Control();
-            Console.WriteLine("Completed\n");
         }
     }
 
@@ -103,17 +77,17 @@
             IIrrigationSystem sprinkler = new SprinklerIrrigation();
             IIrrigationSystem manual = new ManualIrrigation();
 
-            IrrigationController[] irrigationSystems =
+            ControlSystem[] irrigationSystems =
             [
-            new FarmIrrigation("North Farm", new ManualControl(drip)),
-            new FarmIrrigation("East Farm", new AutomaticControl(sprinkler)),
-            new FarmIrrigation("South Farm", new ManualControl(manual)),
-            new FarmIrrigation("West Farm", new AutomaticControl(drip))
+                new ManualControl(manual),
+                new AutomaticControl(sprinkler),
+                new AutomaticControl(drip)
             ];
 
             foreach (var system in irrigationSystems)
             {
-                system.Operate();
+                system.Control();
+                Console.WriteLine();
             }
         }
     }

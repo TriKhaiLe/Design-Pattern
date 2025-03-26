@@ -94,9 +94,9 @@
         static void Main(string[] args)
         {
             // Tao cac dich vu don le
-            MedicalService consultation = new Consultation();
-            MedicalService xray = new XRay();
-            MedicalService surgery = new Surgery();
+            Consultation consultation = new();
+            XRay xray = new();
+            Surgery surgery = new();
 
             Console.WriteLine("Dich vu don le:");
             Console.WriteLine($"{consultation.GetDescription()} - Chi phi: ${consultation.GetCost()}");

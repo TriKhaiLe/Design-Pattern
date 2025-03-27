@@ -67,14 +67,14 @@
             Linh linh = new LinhCoBan();
             Console.WriteLine("Linh co ban: " + linh.GetItem());
 
-            linh = new VuKhi(linh);
-            Console.WriteLine("\nSau khi trang bi vu khi: " + linh.GetItem());
+            Linh linh1 = new VuKhi(linh);
+            Console.WriteLine("\nSau khi trang bi vu khi: " + linh1.GetItem());
 
-            linh = new KyNang(linh);
-            Console.WriteLine("\nSau khi hoc ky nang: " + linh.GetItem());
+            Linh linh2 = new KyNang(linh1);
+            Console.WriteLine("\nSau khi hoc ky nang: " + linh2.GetItem());
 
-            linh = new QuanHam(linh, "Thieu Uy");
-            Console.WriteLine("\nSau khi thang cap: " + linh.GetItem());
+            Linh linh3 = new QuanHam(linh2, "Thieu Uy");
+            Console.WriteLine("\nSau khi thang cap: " + linh3.GetItem());
         }
     }
 }

@@ -2,115 +2,111 @@
 {
     using System;
 
-    // 2. Giao diện State
-    public interface IOrderState
+    interface IState
     {
-        void ProcessOrder();
-        void CancelOrder();
+        void Handle(Lawsuit lawsuit);
+        void NextState(Lawsuit lawsuit);
     }
 
-    // 1. Lớp Context
-    public class Order
+    class FillingState : IState
     {
-        private IOrderState _currentState;
-        public Order() {
-            // Trạng thái ban đầu là Processing
-            _currentState = new ProcessingState(this);
+        public void Handle(Lawsuit lawsuit)
+        {
+            Console.WriteLine("Dang xu ly ho so vu an");
         }
-        public void SetState(IOrderState state) {
-            _currentState = state;
-            Console.WriteLine($"Trạng thái thay đổi thành: {state.GetType().Name}");
-        }
-        public void Process() {
-            _currentState.ProcessOrder();
-        }
-        public void Cancel() {
-            _currentState.CancelOrder();
+
+        public void NextState(Lawsuit lawsuit)
+        {
+            lawsuit.SetState(new TrialState());
+            Console.WriteLine("Chuyen den trang thai xet xu");
         }
     }
 
-    // 3. Các lớp Concrete State
-    public class ProcessingState : IOrderState
+    class TrialState : IState
     {
-        private readonly Order _context;
-
-        public ProcessingState(Order context)
+        public void Handle(Lawsuit lawsuit)
         {
-            _context = context;
+            Console.WriteLine("Dang xet xu vu an");
         }
 
-        public void ProcessOrder()
+        public void NextState(Lawsuit lawsuit)
         {
-            Console.WriteLine("Đơn hàng đang được xử lý và chuyển sang trạng thái Đã giao hàng.");
-            _context.SetState(new ShippedState(_context));
-        }
-
-        public void CancelOrder()
-        {
-            Console.WriteLine("Đơn hàng đã bị hủy từ trạng thái Đang xử lý.");
-            _context.SetState(new CancelledState(_context));
+            lawsuit.SetState(new AwaitingJudgmentState());
+            Console.WriteLine("Chuyen den trang thai cho phan quyet");
         }
     }
 
-    public class ShippedState : IOrderState
+    class AwaitingJudgmentState : IState
     {
-        private readonly Order _context;
-
-        public ShippedState(Order context)
+        public void Handle(Lawsuit lawsuit)
         {
-            _context = context;
+            Console.WriteLine("Dang cho phan quyet cua vu an");
         }
 
-        public void ProcessOrder()
+        public void NextState(Lawsuit lawsuit)
         {
-            Console.WriteLine("Đơn hàng đã được giao, không thể xử lý thêm.");
-        }
-
-        public void CancelOrder()
-        {
-            Console.WriteLine("Đơn hàng đã giao, không thể hủy.");
+            lawsuit.SetState(new ClosedState());
+            Console.WriteLine("Chuyen den trang thai dong vu an");
         }
     }
 
-    public class CancelledState : IOrderState
+    class ClosedState : IState
     {
-        private readonly Order _context;
-
-        public CancelledState(Order context)
+        public void Handle(Lawsuit lawsuit)
         {
-            _context = context;
+            Console.WriteLine("Vu an da dong");
         }
 
-        public void ProcessOrder()
+        public void NextState(Lawsuit lawsuit)
         {
-            Console.WriteLine("Đơn hàng đã hủy, không thể xử lý.");
-        }
-
-        public void CancelOrder()
-        {
-            Console.WriteLine("Đơn hàng đã ở trạng thái hủy.");
+            Console.WriteLine("Vu an da ket thuc, khong the chuyen trang thai");
         }
     }
 
-    // 4. Lớp Client
-    public class Client
+    class Lawsuit
     {
-        public static void Main()
+        private IState currentState;
+
+        public Lawsuit()
         {
-            Order order = new Order();
+            currentState = new FillingState();
+        }
 
-            Console.WriteLine("Thử xử lý đơn hàng:");
-            order.Process();
+        public void SetState(IState state)
+        {
+            currentState = state;
+        }
 
-            Console.WriteLine("\nThử xử lý đơn hàng lần nữa:");
-            order.Process();
+        public void Handle()
+        {
+            currentState.Handle(this);
+        }
 
-            Console.WriteLine("\nThử hủy đơn hàng:");
-            order.Cancel();
+        public void NextState()
+        {
+            currentState.NextState(this);
+        }
+    }
 
-            Order newOrder = new Order();
-            Console.WriteLine("\nThử hủy đơn hàng mới:");
-            newOrder.Cancel();
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Lawsuit lawsuit = new Lawsuit();
+            lawsuit.Handle();
+            lawsuit.NextState();
+            Console.WriteLine();
+
+            lawsuit.Handle();
+            lawsuit.NextState();
+            Console.WriteLine();
+
+            lawsuit.Handle();
+            lawsuit.NextState();
+            Console.WriteLine();
+
+            lawsuit.Handle();
+            lawsuit.NextState();
         }
     }
 }

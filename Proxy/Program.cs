@@ -1,103 +1,63 @@
 ﻿namespace Proxy
 {
     using System;
-    using System.Collections.Generic;
 
-    public interface IClothingImage
+    interface ITrackingProxy
     {
-        void Display();
+        void GetBusLocation();
     }
 
-    public class ClothingImage : IClothingImage
+    class BusTrackingSystem : ITrackingProxy
     {
-        private string _fileName;
-        private long _size;
-
-        public ClothingImage(string fileName, long size)
+        public BusTrackingSystem()
         {
-            _fileName = fileName;
-            _size = size;
-            LoadImageFromServer();
+            // Giả lập khởi tạo nặng (tải dữ liệu GPS)
+            Console.WriteLine("Khoi tao BusTrackingSystem, dang tai du lieu GPS...");
+            System.Threading.Thread.Sleep(1000); // Giả lập thời gian khởi tạo 1 giây
+            Console.WriteLine("BusTrackingSystem da khoi tao xong");
         }
 
-        private void LoadImageFromServer()
+        public void GetBusLocation()
         {
-            Console.WriteLine($"Dang tai anh {_fileName} tu server... (Kich thuoc: {_size}TB)");
-            System.Threading.Thread.Sleep(2000);
-            Console.WriteLine($"Da tai xong anh {_fileName}");
-        }
-
-        public void Display()
-        {
-            Console.WriteLine($"Hien thi anh: {_fileName}");
+            Console.WriteLine("Vi tri xe buyt: Ga Trung Tam");
         }
     }
 
-    public class ProxyClothingImage : IClothingImage
+    class Proxy : ITrackingProxy
     {
-        private ClothingImage? _realImage;
-        private string _fileName;
-        private long _size;
+        private BusTrackingSystem realTrackingSystem; // Chưa khởi tạo ngay
 
-        public ProxyClothingImage(string fileName, long size)
+        // Phương thức để khởi tạo đối tượng nặng khi cần
+        private void InitializeTrackingSystem()
         {
-            _fileName = fileName;
-            _size = size;
+            if (realTrackingSystem == null)
+            {
+                Console.WriteLine("Khoi tao BusTrackingSystem lan dau...");
+                realTrackingSystem = new BusTrackingSystem();
+            }
         }
 
-        public void Display()
+        public void GetBusLocation()
         {
-            _realImage ??= new ClothingImage(_fileName, _size);
-            _realImage.Display();
-        }
-    }
-
-    public class ClothingItem
-    {
-        private string _name;
-        private decimal _price;
-        private IClothingImage _imageProxy;
-
-        public ClothingItem(string name, decimal price, IClothingImage imageProxy)
-        {
-            _name = name;
-            _price = price;
-            _imageProxy = imageProxy;
-        }
-
-        public void DisplayInfo()
-        {
-            Console.WriteLine($"San pham: {_name} - Gia: {_price:C}");
-        }
-
-        public void DisplayImage()
-        {
-            _imageProxy.Display();
+            // Chỉ khởi tạo đối tượng nặng khi thực sự cần
+            InitializeTrackingSystem();
+            realTrackingSystem.GetBusLocation();
         }
     }
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            List<ClothingItem> clothingItems =
-            [
-                new ClothingItem("Ao so mi trang", 29.99m, new ProxyClothingImage("white_shirt.jpg", 1500)),
-                new ClothingItem("Quan jeans xanh", 49.99m, new ProxyClothingImage("blue_jeans.jpg", 2000)),
-                new ClothingItem("Vay da hoi", 99.99m, new ProxyClothingImage("evening_dress.jpg", 3000))
-            ];
+            Console.WriteLine($"Thoi gian hien tai: {DateTime.Now:HH:mm}");
+            Console.WriteLine("Khoi tao Proxy...");
+            Proxy proxy = new Proxy();
 
-            Console.WriteLine("Danh sach san pham:");
-            foreach (var item in clothingItems)
-            {
-                item.DisplayInfo();
-            }
+            Console.WriteLine("\nGoi GetBusLocation lan dau...");
+            proxy.GetBusLocation(); // Lúc này mới khởi tạo BusTrackingSystem
 
-            Console.WriteLine("\nNguoi dung yeu cau xem anh chi tiet san pham dau tien:");
-            clothingItems[0].DisplayImage();
-
-            Console.WriteLine("\nNguoi dung xem lai anh:");
-            clothingItems[0].DisplayImage();
+            Console.WriteLine("\nGoi GetBusLocation lan hai...");
+            proxy.GetBusLocation(); // Không khởi tạo lại vì đã có đối tượng
         }
     }
 }
